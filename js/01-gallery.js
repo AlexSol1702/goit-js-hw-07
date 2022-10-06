@@ -1,12 +1,17 @@
-import { galleryItems } from './gallery-items.js';
-// Change code below this line
+import { galleryItems } from "./gallery-items.js";
 
-const gallery = document.querySelector('.gallery');
+const gallery = document.querySelector(".gallery");
+let modalWindow;
+
+
+gallery.insertAdjacentHTML("afterbegin", createItem(galleryItems));
+gallery.addEventListener('click', onImgClick);
+
 
 function createItem(array) {
-    
-    return array.map(({ preview, original, description }) => {
-        return `<div class="gallery__item">
+  return array
+    .map(({ preview, original, description }) => {
+      return `<div class="gallery__item">
   <a class="gallery__link" href="${original}">
     <img
       class="gallery__image"
@@ -16,15 +21,36 @@ function createItem(array) {
     />
   </a>
 </div>
-        `
-    }).join('');
-    
-};
+        `;
+    })
+    .join("");
+}
 
-gallery.insertAdjacentHTML('afterbegin', createItem(galleryItems));
+function onKeyDown(e) { 
+  if (e.code ==='Escape') {
+     modalWindow.close() 
+  } 
+}
 
+function onImgClick(event) {
+  event.preventDefault();
 
+  modalWindow = basicLightbox.create(`
+    <div class="modal">
+        <img src = "${event.target.dataset.source}">
+    </div>`);
 
+  modalWindow.show();
 
+  const modalContainer = document.querySelector('.modal');
+
+  modalContainer.addEventListener('click', () => { modalWindow.close() });
+
+  if (modalWindow) {
+    document.addEventListener('keydown', onKeyDown);
+  } else {
+    document.removeEventListener('keydown',onKeyDown)
+  }
+}
 
 
